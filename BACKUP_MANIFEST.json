@@ -1,0 +1,27 @@
+{
+  "source": "BREAK_NORTH_M6_Architecture_v3.zip",
+  "format": "independent-standard-zip",
+  "maxPartBytes": 20971520,
+  "totalOriginalFiles": 84,
+  "verifiedContentMatch": true,
+  "parts": [
+    {
+      "file": "BREAK_NORTH_M6_Architecture_v3_Part01.zip",
+      "bytes": 13410708,
+      "entries": 61,
+      "sha256": "cb0263e89730726b45d2ba9d0b088f696e0d7c5dd99e451c8d69acd2dcec826d"
+    },
+    {
+      "file": "BREAK_NORTH_M6_Architecture_v3_Part02.zip",
+      "bytes": 12672173,
+      "entries": 2,
+      "sha256": "b5855ed85f638e19d8b65f1f003e289e3fcc2eaf0cb9adeb1cd93273694882c1"
+    },
+    {
+      "file": "BREAK_NORTH_M6_Architecture_v3_Part03.zip",
+      "bytes": 16776028,
+      "entries": 21,
+      "sha256": "e9f918bf7fc8f95eb1149693ecd98809270f6a7c6a287d4e774c84b667dbca20"
+    }
+  ]
+}

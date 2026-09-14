@@ -2,6 +2,8 @@
 
 **정리일: 2026-09-13 · 기준: M7 Priority A 납품 이후**
 
+**추가 인계: 2026-09-14 · M6 Architecture v3 스타일 사용자 승인.** 기존 1~20절은 원문을 유지했다. 새 작업자는 **21~25절의 최신 추가 기준도 반드시 함께 읽는다.** 기존의 밝고 읽기 쉬운 산업 세계, 쿼드·모듈·재사용·검증 원칙을 유지하면서 이번에 승인된 재질과 디테일을 이어가는 보충 지침이다. 기존 절의 이전 작업 범위·파일 위치·승인 상태는 당시 기록이며, 현재 제작 결과는 24절을 참고한다.
+
 이 문서는 이전 대화가 없는 새 Codex 인스턴스가 BREAK NORTH 에셋 제작을 이어가기 위한 독립적인 작업 기준이다. 사용자 요구, 이후 수정된 기준, 기존 에셋의 기술 계약, 검증 절차를 통합했다. 모델 파일 자체는 별도 납품 ZIP에 있다.
 
 ## 1. 처음 읽을 핵심
@@ -468,3 +470,118 @@ work/m7_delivery.py
 8. 쿼드·정렬·접촉·UV·export 검사가 실제 결과로 확인되었는가?
 
 **모델 하나를 독립 작품처럼 만드는 것보다 BREAK NORTH 세계 전체의 부품으로 만드는 것을 우선한다.**
+
+---
+
+## 21. 2026-09-14 사용자 승인 스타일 — M6 Architecture v3
+
+사용자는 v3 제작 결과에 대해 **“네가 지금 만든 스타일 매우 좋아”**라고 명시적으로 평가했다. 이번 v3를 이후 신규 제작의 구체적인 시각적 기준으로 삼는다. 이는 이전 M6 v4 / M7 A 전체를 재제작하거나 그 버전의 계약을 변경하라는 지시가 아니다.
+
+승인된 방향은 **밝은 스타일라이즈드 산업 공간 + 기능이 읽히는 단순한 형상 + 현실적인 표면 디테일**이다. 현실감은 주로 normal, roughness, 재질별 반사 차이로 더한다. 포토리얼의 어둡고 탁한 배색을 따라가지 않는다. 기존 3~5절의 감정·색채·기능색·Space 배색 원칙은 그대로 유효하다.
+
+- 콘크리트: 밝은 베이지, 기공과 골재가 있는 표면. 단면은 표면보다 어둡고 거칠게 구분하되 전체를 어둡게 만들지 않는다.
+- 도장 금속: 밝은 청회색, 넓은 평면과 얇은 테두리. 약한 도장 요철·긁힘을 normal로 표현한다.
+- 구조용 철재: 청회색 계열의 중간 명도, 도장 판과 구분되는 부드러운 반사. 지나치게 검은 금속이나 거울 같은 광택을 기본으로 삼지 않는다.
+- 바닥: 밝은 중성 회색. 천장: 따뜻하고 밝은 크림 계열. 한 Space 안에서 색을 무작위로 섞지 않는다.
+- 기존 도구의 고유 색 구분과 기능색은 유지한다. 이번 건축 팔레트를 모든 도구에 일괄 적용하지 않는다.
+
+사용자는 처음부터 **폴리곤 수를 많이 늘리지 않으면서 normal map으로 더 현실적인 텍스처**를 원했다. 이후 지적한 것은 표면 디테일의 존재가 아니라 금속의 모자이크 같은 반사와 어둡고 현실적인 색감이었다. 따라서 디테일을 다시 지워 균일한 찰흙 같은 표면으로 되돌리지 않는다.
+
+## 22. 재질과 색감의 실제 구현 — v2/v3 기준
+
+### 중립 BaseColor와 기본 tint
+
+v3 텍스처 24장과 기본 tint는 v2와 동일하다. **중립색 BaseColor × material tint**로 색을 만든다. Blender에서는 `Handoff_Default_Tint` multiply node, Unity에서는 Built-in `Color` / URP `Base Color`에 tint가 적용된다. 실제 화면은 그 뒤 조명·환경 반사·톤매핑의 영향을 받는다.
+
+텍스처 PNG만 열었을 때 베이지·청회색이 약하게 보이는 것은 이 구조의 정상적인 결과다. PNG 자체를 채색한 후 기존 tint를 그대로 두어 색을 이중 적용하지 않는다. Normal과 MetallicSmoothness는 색상 그림이 아닌 데이터이다. 파일 단독 인상과 완성된 material의 외형을 혼동하지 않는다.
+
+아래는 **승인된 건축 키트의 기본 sRGB tint**이며 최종 화면 픽셀 색이나 모든 후속 에셋의 고정색이 아니다. 같은 메시의 색 변형은 계속 material로 처리한다.
+
+| Family | 기본 tint |
+|---|---|
+| ConcreteSurfaceNeutral | `#E4D9C3` |
+| ConcreteInterior | `#C5BBA5` |
+| PaintedMetalNeutral | `#B5C8D8` |
+| BareCutMetal | `#CBD4DC` |
+| StructuralSteel | `#AABECE` |
+| FloorNeutral | `#C6C9C5` |
+| CeilingNeutral | `#EBE5D6` |
+| ReinforcedInterior | `#B8B3A5` |
+
+Blender node 값은 필요한 sRGB→linear 변환을 적용한다. Unity color 필드와 Blender 내부 선형 수치를 숫자 그대로 대입하여 색을 어긋나게 하지 않는다. 정확한 구현은 v3의 manifest와 재질 노드/Editor 코드를 참고한다.
+
+### 금속의 모자이크 반사 재발 방지
+
+v1에는 금속 roughness에 44×44 사각 보간 노이즈와 높은 metallic 값이 있었다. 사용자 화면의 원인을 직접 렌더로 확정한 것은 아니지만, 해당 패턴이 반사에서 도드라질 수 있어 v2에서 제거했고 v3에서도 유지했다.
+
+- 사각 셀 단위의 roughness 변화나 고대비 불규칙 광택을 기본으로 사용하지 않는다.
+- 현재 StructuralSteel은 metallic 약 **0.72**, roughness 약 **0.56**. BareCutMetal은 약 **0.90 / 0.48**이다. 연속적인 저대비 변화를 더한다.
+- 금속 normal의 픽셀 단위에 가까운 진동을 줄이고 미세한 방향성 표면은 남겼다. 새 작업도 mip/압축에서 깨져 보일 수 있는 고주파 패턴에 주의한다.
+- 모든 재질의 roughness/metallic을 같게 만드는 방식으로 해결하지 않는다. 도장과 노출 금속을 구분한다.
+- 이 수치는 이번 키트의 승인된 출발점이다. 다른 형상/재질/조명에 무조건 전역 적용할 규칙이 아니다.
+
+### 앞면·뒷면 계약 유지
+
+Wall은 **Face A / Face B / Interior**의 독립된 슬롯과 재질을 유지한다. 앞면 베이지, 뒷면 청회색처럼 각각 색을 바꿀 수 있고 서로 다른 family의 재질로 교체할 수도 있다. Slab도 **Top / Bottom / Interior**를 유지한다.
+
+v3 금속 벽의 테두리는 해당 Face A/B 도장 재질을 따라간다. 나사는 기존 Interior 슬롯의 BareCutMetal을 공유한다. 즉 **나사용 새 독립 슬롯은 없으며**, Interior 재질을 교체하면 나사에도 영향을 준다. 기존 응답의 “별도 금속 재질”은 앞·뒷면 도장과 구분된다는 뜻이지 단면과 독립된 네 번째 슬롯이라는 뜻이 아니다. 후속 작업에서 나사와 단면까지 독립 제어가 필요하면 슬롯/재질 계약을 명시적으로 설계한다.
+
+## 23. 승인된 기능 디테일과 과장 허용 범위
+
+사용자는 금속 벽의 얇은 직사각 테두리와 모서리 나사가 있는 참고 그림을 제공했다. v3는 이를 **양면의 45° 맞댐 테두리, 각 면 네 모서리 체결부**로 구현했다. 기둥 collar, 빔 flange, 금속 joint, 문틀/해치틀, end cap, reinforcement trim에도 기능적인 볼트를 추가했다. 콘크리트 넓은 면에 이유 없이 나사를 뿌리지는 않았다.
+
+마지막 사용자 지시:
+
+> “나사 등의 디테일은 조금의 과장은 있어도 괜찮을 것 같아. 수정하라는 얘기는 아니고…”
+
+이는 **향후 제작의 허용 범위**이다. 이 지시만으로 승인된 v3의 나사 크기나 형상을 다시 변경하지 않는다. 현재 작업은 인계서 보완이며 에셋 수정 요청이 아니다.
+
+이후 신규 모델에서는 게임 시점에서 체결부가 읽히도록 나사 머리·와셔·테두리 폭·돌출을 실제 비례보다 조금 강조해도 된다. 고정 배율은 사용자가 정하지 않았으므로 임의의 수치를 전역 규칙으로 만들지 않는다. 주 형상보다 나사가 먼저 보이거나 모든 모서리가 과도하게 둥글어지는 장난감 같은 과장은 피한다.
+
+- 테두리와 체결부는 기능과 조립 관계를 설명한다. 논리 Cell이나 파괴 그리드를 장식 패널선으로 드러내지 않는다.
+- 가까이서 실루엣을 만드는 나사 머리·얇은 프레임은 geometry로 표현해도 된다. 나사산·미세 홈·스크래치 전부를 geometry로 만들 필요는 없다.
+- v3 볼트는 작은 chamfer가 있는 닫힌 육각 머리이다. 실제 나사산이나 십자 홈을 구현했다고 해석하지 않는다.
+- 현재 bolt head는 지지면 안으로 약 1mm, 금속 벽 테두리는 도장 면 안으로 약 2mm 맞물린다. 나사 중심의 지지면 raycast를 검사했다. 새 부품의 크기·지지면이 달라지면 다시 측정한다.
+- 추가 디테일로 UV1 packing이 바뀔 수 있다. all-quad, 닫힌 부품, UV 면적/겹침, tangent, FBX reimport 검사를 계속 수행한다.
+- 기능 없는 작은 hardware마다 collider를 추가하지 않는다. 구조 collider와 visual detail을 구분하고 실제 보행 개구부를 유지한다.
+
+v3 실측 예: MetalWallThick **460 tris**, Column/Beam **452 tris**, DoorFrame **668 tris**, HatchFrame **560 tris**, XJoint **668 tris**. 금속 벽 구조 두께는 **0.15m**, 테두리를 포함한 visual 두께는 **0.174m**이다. **visual bounds를 snapping/구조 두께로 오인하지 않는다.** 피벗·구조 thickness·collider 기준은 별도 항목으로 보존한다.
+
+## 24. 현재 실제 전달 파일과 검증 상태
+
+이번에 제작한 것은 **M6 Architectural Foundation 필수 11종 + 권장 6종**이다. 두께별 형상 변형을 포함한 실제 모델 **27개**, 개구부·파괴 상태 참고용 fixture **6개**, 총 **FBX 33개**이다. 기존 M6 v4 / M7 A 전체를 대체하는 패키지가 아니다.
+
+현재 작업 공간 기준:
+
+```text
+BREAK_NORTH_ARTIST_HANDOFF.md                # 최신 인계서: 이 파일
+outputs/BREAK_NORTH_M6_Architecture_v3.zip    # 사용자 승인 스타일 참조 납품본
+outputs/BREAK_NORTH_M6_Architecture_v3/
+  README_KO.md
+  ASSET_CATALOG.md
+  MATERIAL_UV_CONTRACT.md
+  ASSEMBLY_AND_GAME_INTEGRATION.md
+  BlenderSources/BN_M6_Architecture_Library.blend
+  ComparisonScenes/BN_M6_Assembly_And_Cut_References.blend
+  Assets/BREAK_NORTH_M6_Architecture/
+    KitManifest.json
+    Models/
+    Textures/
+    Editor/BN675ArchitectureImporter.cs
+  Reports/Hardware_V3_Changes.json
+  Reports/Geometry_And_FBX_Checks.json
+  Reports/Material_UV_Normal_QA.json
+  RebuildScripts/
+```
+
+새 인스턴스에는 **이 인계서와 v3 ZIP을 함께 전달**한다. 문서만으로 geometry와 material node를 정확히 복원할 수 있다고 가정하지 않는다. 이전 19절의 M6/M7 파일 경로 및 생성 스크립트는 이전 환경 기록이므로 현재 존재 여부를 다시 확인한다. 이 작업에서는 `C:/blender/blender.exe`, Blender 5.2.1 LTS를 사용했다. 다른 컴퓨터에서도 같은 경로라고 가정하지 않는다.
+
+Unity namespace는 `Assets/BREAK_NORTH_M6_Architecture`이다. 기존 `Assets/BREAK_NORTH_FinalKit` 및 `Assets/BREAK_NORTH_M7`와 구분한다. 이 키트는 atlas가 아닌 **2m/UV주기 타일 재질**, 1K 텍스처 24장, normal strength 기본 1.0을 사용한다. M6 v4/M7의 atlas와 normal strength 규칙을 섞지 않는다.
+
+Unity Editor 도구는 Built-in Standard / URP Lit의 재질·프리팹 생성, 임포트 검사, 참고 scene 생성을 제공한다. Build 메뉴는 이번 기본 tint 팔레트를 다시 적용한다. 사용자 커스텀 재질이나 override가 있다면 먼저 확인한다. `.meta`/GUID를 보존하며, 코드가 제공되었다는 사실을 Unity에서 이미 실행되었다는 뜻으로 해석하지 않는다.
+
+**사용자 스타일 승인은 있음. 실제 Unity 실행 검증은 아직 없음.** Blender/FBX의 형상·UV·normal·tangent·부착 검사는 수행했지만 Unity C# compile/menu, 게임 화면, physics, lightmap, runtime destruction, Save/Load/Host/Late Join은 수행하지 않았다. 참고 파괴 장면은 정적 geometry 배치이다. 새 렌더 이미지를 만들지 않는 기존 원칙도 유지한다.
+
+## 25. 새 인스턴스 시작 문구 — 최신
+
+> BREAK_NORTH_ARTIST_HANDOFF.md의 기존 핵심과 21~25절의 최신 추가 기준을 함께 읽고, BREAK_NORTH_M6_Architecture_v3.zip을 실제 스타일 참조로 사용해줘. 사용자는 v3의 밝은 베이지·청회색 산업 스타일, normal 기반 표면 디테일, 얇은 금속 테두리와 기능적인 볼트를 승인했어. 낮은 폴리곤과 쿼드·모듈·부착 검증을 유지하고, 금속의 사각 roughness 패턴이나 어둡고 탁한 색감으로 되돌리지 마. 앞·뒷면의 독립 재질 계약과 neutral BaseColor × tint 구조를 유지해줘. 향후 새 디테일은 나사 머리 등이 게임 시점에서 읽히도록 조금 과장해도 되지만, 기존 승인 모델을 이 이유만으로 재수정하지 마. 실제 Unity 미검증 항목과 사용자 스타일 승인을 구분해서 보고해줘. 이번 새 작업 범위는: [여기에 요청 입력].
